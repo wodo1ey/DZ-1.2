@@ -1,0 +1,60 @@
+//Задача вывода путника из лабиринта. Дан лабиринт размером NxN (N<=15). форма лабиринта записана в текстовом фаайле, стена обозначается
+//символом М, отсутствие стены - символом пробела. Даны кооринаты мышки в лабиринте (номер строки (X) и номер столбца (Y))
+//и координаты сыра (номер строки (ХС) и номер столбца (YC)). Нужно посчитать длину самого длинного пути выхода из лабиринта.
+//Длина пути определяется числом клеток на которые должна ступить нога мышки.
+
+#include <fstream>
+#include <windows.h>
+#pragma hdrstop
+#include "pt4.h"
+using namespace std;
+
+const int NMAX = 15;
+
+bool M[NMAX][NMAX];
+
+int N, K(0);
+
+int XC, YC;
+
+int MAX(0);
+
+void Step(int X, int Y) {
+	if (M[X][Y]) { K++;
+		M[X][Y] = false;
+		if (X == XC && Y == YC) {
+			if (K > MAX)
+				MAX = K;
+		}
+		else {
+			Step(X, Y+1);
+			Step(X+1, Y);
+			Step(X, Y-1);
+			Step(X-1, Y);
+		}
+		M[X][Y] = true;
+		K--;
+	}
+}
+
+void ReadM(ifstream &fin) { string line;
+	for (int i = 0; i < N; i++) {
+		getline(fin, line);
+		for (int j = 0; j < N; j++)
+			M[i][j] = line[j]-77;
+	}
+}
+
+
+void Solve()
+{
+    Task("BackTrack11");
+	string fname; pt >> fname;
+	int X, Y; pt >> N >> X >> Y;
+	pt >> XC >> YC; XC--; YC--;
+	X--; Y--;
+	ifstream fin(fname);
+	ReadM(fin);
+	Step(X, Y);
+	pt << MAX;
+}
